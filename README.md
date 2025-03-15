@@ -28,7 +28,11 @@ Script ini dapat dijalankan dengan perintah berikut di terminal:
 ./dsotm.sh --play="<Track>"
 ```
 ```sh
-./dsotm.sh --play="<Track>"
+./dsotm.sh --play="Speak to Me"
+./dsotm.sh --play="On the Run"
+./dsotm.sh --play="Time"
+./dsotm.sh --play="Money"
+./dsotm.sh --play="Brain Damage"
 ```
 
 ## 📝 Kode Program
