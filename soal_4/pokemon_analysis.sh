@@ -23,8 +23,8 @@ if [ "$perintah" == "--info" ]; then
     }
     END {
         print "Summary of", ARGV[1]
-        print "Highest Adjusted Usage:", max_pokemon, "with", max_usage "%"
-        print "Highest Raw Usage:", max_raw_pokemon, "with", max_raw, "uses"
+        print "Usage Tertinggi:", max_pokemon, "with", max_usage "%"
+        print "Raw Usage Tertinggi:", max_raw_pokemon, "with", max_raw, "uses"
     }' "$file"
     exit 0
 fi
