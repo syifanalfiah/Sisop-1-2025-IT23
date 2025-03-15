@@ -102,7 +102,11 @@ time_display() {
     done
 }
 ```
-Menampilkan jam real-time dengan date yang diperbarui setiap detik (sleep 1).
+- while true; do ... done → Looping terus menerus.
+- clear → Bersihkan terminal sebelum update jam.
+- echo -e "\e[1;33mjam brp iyeah\e[0m" → Cetak teks warna kuning.
+- date "+%Y-%m-%d %H:%M:%S" → Menampilkan waktu real-time.
+- sleep 1 → Tunggu 1 detik sebelum update.
 
 🛠️ Fungsi money()
 ```sh
@@ -132,8 +136,14 @@ money() {
     done
 }
 ```
-Menggunakan array simbols berisi simbol mata uang.
-Menampilkan efek jatuhnya simbol acak seperti matrix effect.
+- simbols=(...) → Array simbol mata uang.
+- cols=$(tput cols), lines=$(tput lines) → Ambil ukuran terminal.
+- declare -A positions → Simpan posisi simbol tiap kolom.
+- Loop utama (while true) menjalankan efek terus.
+- for ((i = 0; i < cols; i+=3)) → Cetak simbol tiap 3 kolom.
+- shuf -i 1-$lines -n 1 → Ambil posisi awal acak.
+- tput cup $row $i → Cetak simbol di posisi tertentu.
+- sleep 0.1 → Buat efek jatuh lebih halus.
 
 🛠️ Fungsi brain_damage()
 ```sh
@@ -147,8 +157,10 @@ brain_damage() {
     done
 }
 ```
-Menampilkan daftar proses dengan CPU tertinggi.
-Memperbarui tampilan setiap detik dengan sleep 1.
+- clear → Bersihkan terminal setiap update.
+- ps -eo pid,comm,%cpu,%mem --sort=-%cpu | head -10 → Ambil 10 proses dengan CPU tertinggi.
+- free -h → Tampilkan penggunaan memori dengan format mudah dibaca.
+- sleep 1 → Update setiap 1 detik.
 
 🎛️ Switch-Case: Menjalankan Track Sesuai Input  
 ```sh
