@@ -1,0 +1,19 @@
+--2025-03-15 22:15:29--  https://drive.usercontent.google.com/u/0/uc?id=1l8fsj5LZLwXBlHaqhfJVjz_T0p7EJjqV
+Resolving drive.usercontent.google.com (drive.usercontent.google.com)... 64.233.170.132, 2404:6800:4003:c01::84
+Connecting to drive.usercontent.google.com (drive.usercontent.google.com)|64.233.170.132|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://drive.usercontent.google.com/uc?id=1l8fsj5LZLwXBlHaqhfJVjz_T0p7EJjqV [following]
+--2025-03-15 22:15:29--  https://drive.usercontent.google.com/uc?id=1l8fsj5LZLwXBlHaqhfJVjz_T0p7EJjqV
+Reusing existing connection to drive.usercontent.google.com:443.
+HTTP request sent, awaiting response... 303 See Other
+Location: https://drive.usercontent.google.com/download?id=1l8fsj5LZLwXBlHaqhfJVjz_T0p7EJjqV [following]
+--2025-03-15 22:15:30--  https://drive.usercontent.google.com/download?id=1l8fsj5LZLwXBlHaqhfJVjz_T0p7EJjqV
+Reusing existing connection to drive.usercontent.google.com:443.
+HTTP request sent, awaiting response... 200 OK
+Length: 85297 (83K) [application/octet-stream]
+Saving to: ‘uc?id=1l8fsj5LZLwXBlHaqhfJVjz_T0p7EJjqV’
+
+                uc?id=1l8fsj5LZ   0%[                                                        ]       0  --.-KB/s                              uc?id=1l8fsj5LZL  56%[==============================>                         ]  46.78K   228KB/s               uc?id=1l8fsj5LZLwXBlHaqhfJVjz_T 100%[=======================================================>]  83.30K   327KB/s    in 0.3s    
+
+2025-03-15 22:15:33 (327 KB/s) - ‘uc?id=1l8fsj5LZLwXBlHaqhfJVjz_T0p7EJjqV’ saved [85297/85297]
+
