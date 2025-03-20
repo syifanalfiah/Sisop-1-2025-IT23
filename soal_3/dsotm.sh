@@ -1,7 +1,7 @@
 #!/bin/bash
 
 speak_to_me() {
-    echo -e "\e[1;34mSᑭᕮᗩK TO ᗰᕮ - ᗯOᖇᗪS Oᖴ ᗩᖴᖴIᖇᗰᗩTIOᑎ\e[0m"
+    echo -e "\e[1;34mSᑭᕮᗩK TO ᗰᕮ - ᗯOᖇᗪS Oᖴ ᗩᖴᖴIᖖᗩTIOᑎ\e[0m"
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     
     while true; do
@@ -11,17 +11,18 @@ speak_to_me() {
 }
 
 on_the_run() {
-    panjang=$(tput cols)
+    panjang=$(($(tput cols) - 10))
     progres=0
 
     while [ $progres -le $panjang ]; do
         clear
         echo -e "\e[1;32moᑎ Tᕼᕮ ᗯᗩY ᑌᗯᑌ\e[0m"
         echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
         echo -n "["
         for ((i = 0; i < progres; i++)); do echo -n "•"; done
         for ((i = progres; i < panjang; i++)); do echo -n " "; done
-        echo "] $(($progres * 100 / $panjang))%"
+        echo -n "] $(($progres * 100 / $panjang))%"
 
         progres=$((progres + 1))
         sleep $(awk -v min=0.1 -v max=1 'BEGIN{srand(); print min+rand()*(max-min)}')
@@ -34,7 +35,7 @@ time_display() {
         echo -e "\e[1;33mjam brp iyeah\e[0m"
         echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         date "+%Y-%m-%d %H:%M:%S"
-	sleep 1
+        sleep 1
     done
 }
 
@@ -66,11 +67,9 @@ money() {
 
 brain_damage() {
     while true; do
-        clear
+        tput cup 0 0
         echo -e "\e[1;35mBʀᴀɪɴ Dᴀᴍᴀɢᴇ - Cᴜsᴛᴏᴍ Tᴀsᴋ Mᴀɴᴀɢᴇʀ\e[0m"
         echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        echo -e "\e[1;32mCPU Usage:\e[0m"
-        ps -eo pid,comm,%cpu,%mem --sort=-%cpu | head -10 | awk '{printf "%-8s %-20s %-10s %-10s\n", $1, $2, $3"%", $4"%"}'
         
         echo ""
         echo -e "\e[1;34mMemory Usage:\e[0m"
