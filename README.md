@@ -199,7 +199,7 @@ echo -e "\e[1;34mSᑭᕮᗩK TO ᗰᕮ - ᗯOᖇᗪS Oᖴ ᗩᖴᖖᗩTIOᑎ\e[0
 
 ### Output
 
-![Screenshot from 2025-03-20 21-13-15](https://github.com/user-attachments/assets/ef118ee0-ef52-4372-9d21-5833444057e2)
+![Screenshot from 2025-03-20 21-14-50](https://github.com/user-attachments/assets/f2f55310-00fe-4824-96d8-842e96ccf62f)
 
 ![Screenshot from 2025-03-20 21-14-30](https://github.com/user-attachments/assets/3c4dc23a-051a-451a-82e0-dddb6c53b578)
 
