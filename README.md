@@ -9,7 +9,27 @@
 | Hafiz Ramadhan              | 5027241096 |
 
 ## Soal No 1
-soon
+#### 1.
+![image](https://github.com/user-attachments/assets/49410aa1-42a5-46da-8133-a7afa38db491)
+
+- mkdir soal_1 = untuk membuat directory baru bernama soal_1 
+- cd soal_1 = untuk masuk ke directory yg Bernama soal_1 
+- nano poppo_siroyo.sh = Berguna untuk mengedit skrip atau kode pemrograman di terminal. 
+- wget "https://drive.usercontent.google.com/u/0/uc?id=1l8fsj5LZLwXBlHaqhfJVjz_T0p7EJjqV&export= download" -O reading_data.csv = untuk mendownload file yang ada di dalam drive 
+- chmod +x poppo_siroyo.sh = untuk mengganti permission agar bisan di execute
+
+![image](https://github.com/user-attachments/assets/94334484-8d28-410b-a8aa-f11f5eede2ee)
+
+A. awk -F',' '$2 == "Chris Hemsworth" {count++}  END {print "Chris Hemsworth membaca " count " buku."}' "$CSV_FILE" = untuk mendapatkan jumlah buku yang telah dibaca chris hemswort 
+B. awk -F',' '$8 == "Tablet" {sum += $6; count++} END {if (count > 0) print "Rata-rata durasi membaca dengan Tablet adalah " sum/count " menit."}' "$CSV_FILE" exit 0 = untuk mendapatkan rata – rata durasi membaca menggunakan tablet  
+C. awk -F',' 'NR > 1 && $7 > max {max = $7; name = $2; title = $3} END {print "Pembaca dengan rating tertinggi: " name " - " title " - " max}' "$CSV_FILE exit 0 = untuk mendapatkan pembaca dengan rating tertinggi 
+D. awk -F',' '$9 == "Asia" && $5 > "2023-12-31" {genre[$4]++} END {for (g in genre) if (genre[g] > max) {max = genre[g]; pop_genre = g} print "Genre paling populer di Asia setelah 2023: " pop_genre " - " max}' "$CSV_FILE" exit 0 = untuk mendapatkan genre apa yang paling popular setelah tahun 2023
+
+
+#### output dari soal 1
+
+![image](https://github.com/user-attachments/assets/83445d2a-2b3b-4691-b91e-ea426f56ae23)
+
 
 ## Soal No 2
 
@@ -347,14 +367,18 @@ case $choice in
 ### Error soal ini
 #### 1.
 ![image](https://github.com/user-attachments/assets/bf719c4b-f6a7-40ae-8943-186288394b92)
+
 bisa spam cron tab, jadi double.
 ![image](https://github.com/user-attachments/assets/69533a89-f1d5-4c4f-bd46-bf22b295264c)
+
 Nambahin if, biar gak rusak/double lagi
 
 #### 2.
 ![image](https://github.com/user-attachments/assets/1617a280-891b-430d-8f92-5c94c2a8b7cd)
+
 error
 ![image](https://github.com/user-attachments/assets/1f2a4dc3-cf59-4ec1-988b-cda3f864ef3a)
+
 Hapus while yang ada di a_nexus, biar ga error lagi.
 
 
