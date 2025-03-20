@@ -201,5 +201,12 @@ echo -e "\e[1;34mSᑭᕮᗩK TO ᗰᕮ - ᗯOᖇᗪS Oᖴ ᗩᖴᖖᗩTIOᑎ\e[0
 
 ![Screenshot from 2025-03-20 21-13-15](https://github.com/user-attachments/assets/ef118ee0-ef52-4372-9d21-5833444057e2)
 
+![Screenshot from 2025-03-20 21-14-30](https://github.com/user-attachments/assets/3c4dc23a-051a-451a-82e0-dddb6c53b578)
+
+![Screenshot from 2025-03-20 21-14-14](https://github.com/user-attachments/assets/e754b66d-d017-4a29-a568-a8dd2f8db3d3)
+
+![Screenshot from 2025-03-20 21-13-44](https://github.com/user-attachments/assets/e1d52912-38f7-469e-9e32-3794684414e4)
+
+![Screenshot from 2025-03-20 21-13-15](https://github.com/user-attachments/assets/dbd71d8e-ac46-469b-b9fb-ccf008e24c7f)
 
 ## Soal No 4
