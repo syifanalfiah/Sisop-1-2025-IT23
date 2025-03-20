@@ -1,4 +1,4 @@
-![Screenshot from 2025-03-20 21-48-05](https://github.com/user-attachments/assets/5e2115b0-86e7-4019-bdcb-48a580b3108a)# Laporan Praktikum Modul 1
+# Laporan Praktikum Modul 1
 
 ## Nama Anggota
 
@@ -368,6 +368,8 @@ gunakan -h atau --help untuk bantuan
 
 ### Output
 ![Screenshot from 2025-03-20 21-47-14](https://github.com/user-attachments/assets/fa96b288-bc2e-48ed-b0d6-519068edafe1)
+
+![Screenshot from 2025-03-20 21-48-05](https://github.com/user-attachments/assets/5e2115b0-86e7-4019-bdcb-48a580b3108a)
 
 ![Screenshot from 2025-03-20 21-48-05](https://github.com/user-attachments/assets/3cf65bd3-f6fc-42b9-97e8-f433468f6634)
 
