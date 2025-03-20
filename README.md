@@ -1,4 +1,4 @@
-# Laporan Praktikum Modul 1
+![Screenshot from 2025-03-20 21-48-05](https://github.com/user-attachments/assets/5e2115b0-86e7-4019-bdcb-48a580b3108a)# Laporan Praktikum Modul 1
 
 ## Nama Anggota
 
@@ -210,3 +210,176 @@ echo -e "\e[1;34mSᑭᕮᗩK TO ᗰᕮ - ᗯOᖇᗪS Oᖴ ᗩᖴᖖᗩTIOᑎ\e[0
 ![Screenshot from 2025-03-20 21-13-15](https://github.com/user-attachments/assets/dbd71d8e-ac46-469b-b9fb-ccf008e24c7f)
 
 ## Soal No 4
+
+### Deskripsi
+Untuk menganalisis file CSV yang berisi data Pokémon, skrip Bash pokemon_analysis.sh memiliki beberapa fitur utama, seperti menampilkan ringkasan data, mengurutkan data berdasarkan kolom tertentu, mencari Pokémon berdasarkan nama, dan memfilter Pokémon berdasarkan tipe.
+
+### Periksa Input
+Bagian pertama skrip mengecek apakah pengguna sudah memberikan minimal dua argumen (file.csv dan perintah). Jika tidak, skrip akan menampilkan pesan error dan keluar.
+
+```sh
+if [ $# -lt 2 ]; then
+    echo "Gunakan: $0 <file.csv> <perintah>"
+    exit 1
+fi
+```
+
+### Info
+- gsub("%", "", $2) menghapus simbol % dari kolom Usage%.
+- awk mencari Pokémon dengan Usage% tertinggi dan Raw Usage tertinggi.
+
+```sh
+  if [ "$perintah" == "--info" ]; then
+    awk -F',' '
+    BEGIN {
+        max_usage = 0; max_raw = 0;
+    }
+    NR > 1 {
+        gsub("%", "", $2)  
+        usage = $2 + 0
+        raw_usage = $3 + 0
+
+        if (usage > max_usage) { max_usage = usage; max_pokemon = $1 }
+        if (raw_usage > max_raw) { max_raw = raw_usage; max_raw_pokemon = $1 }
+    }
+    END {
+        print "Summary of", ARGV[1]
+        print "Usage Tertinggi:", max_pokemon, "with", max_usage "%"
+        print "Raw Usage Tertinggi:", max_raw_pokemon, "with", max_raw, "uses"
+    }' "$file"
+    exit 0
+fi
+```
+
+### Sort
+- Mengecek apakah pengguna memasukkan nama kolom yang valid (usage, rawusage, name, hp, atk, def, dll.).
+- Mengurutkan berdasarkan kolom yang dipilih dengan sort.
+
+```sh
+if [ "$perintah" == "--sort" ]; then
+    if [ -z "$3" ]; then
+        echo "Error: tidak ada argumen untuk sort
+        gunakan -h atau --help untuk bantuan"
+        exit 1
+    fi
+
+    column="$3"
+    case $column in
+        usage) sort_col=2;;
+        rawusage) sort_col=3;;
+        name) sort_col=1;;
+        hp) sort_col=6;;
+        atk) sort_col=7;;
+        def) sort_col=8;;
+        spatk) sort_col=9;;
+        spdef) sort_col=10;;
+        speed) sort_col=11;;
+        *)
+            echo "Error: Invalid column name"
+            exit 1
+            ;;
+    esac
+```
+
+### Grep
+- tolower($1) ~ tolower(key) memungkinkan pencarian tidak case-sensitive.
+- Data diurutkan berdasarkan Usage%.
+
+```sh
+if [ "$perintah" == "--grep" ]; then
+    if [ -z "$3" ]; then
+        echo "Error: tidak ada argumen untuk grep
+        gunakan -h atau --help untuk bantuan"
+        
+        exit 1
+    fi
+
+    grep_keyword="$3"
+
+    { 
+        head -n1 "$file" 
+        awk -F',' -v key="$grep_keyword" '
+        NR > 1 && tolower($1) ~ tolower(key) {
+            gsub("%", "", $2); 
+            print $2 "," $0  
+        }' "$file" | sort -t',' -k1,1nr | cut -d',' -f2-
+    }
+    exit 0
+fi
+```
+
+### Filter
+- Pokémon dapat memiliki dua tipe, sehingga skrip memeriksa dua kolom ($4 dan $5).
+- Data diurutkan berdasarkan Usage% tertinggi.
+
+```sh
+if [ "$perintah" == "--filter" ]; then
+    if [ -z "$3" ]; then
+        echo "Error: Tidak ada tipe Pokémon yang dimasukkan untuk filter!
+        gunakan -h atau --help untuk bantuan""
+        exit 1
+    fi
+
+    type_filter="$3"
+
+    { 
+        head -n 1 "$file"  
+        tail -n +2 "$file" | awk -F',' -v type="$type_filter" '
+        NR > 1 && (tolower($4) == tolower(type) || tolower($5) == tolower(type)) {
+            gsub("%", "", $2); 
+            print $2 "," $0    
+        }' | sort -t',' -k1,1nr | cut -d',' -f2-
+    }
+    exit 0
+fi
+```
+
+### Help
+Menampilkan command bila error atau salah masukin
+
+```sh
+if [[ "$perintah" == "-h" || "$perintah" == "--help" ]]; then
+    cat << EOF
+Gunakan: ./pokemon_analysis.sh <file.csv> <perintah> [options]
+
+perintah:
+  --info           Menampilkan ringkasan Pokemon dengan Usage% dan RawUsage tertinggi.
+  --sort <kolom>   Mengurutkan Pokemon berdasarkan kolom (usage, rawusage, name, hp, atk, def, spatk, spdef, speed).
+  --grep <nama>    Mencari Pokemon berdasarkan nama.
+  --filter <type>  Menampilkan Pokemon berdasarkan tipe (misalnya 'dark').
+  -h, --help       Menampilkan bantuan list yang digunakan.
+EOF
+    exit 0
+fi
+```
+
+### Cara Menjalankan
+
+```sh
+./pokemon_analysis.sh <file.csv> <perintah> [opsi]
+```
+
+### Revisi
+Penambahan error handling berikut di setiap perintah
+
+```sh
+gunakan -h atau --help untuk bantuan
+```
+
+### Output
+![Screenshot from 2025-03-20 21-47-14](https://github.com/user-attachments/assets/fa96b288-bc2e-48ed-b0d6-519068edafe1)
+
+![Screenshot from 2025-03-20 21-48-05](https://github.com/user-attachments/assets/3cf65bd3-f6fc-42b9-97e8-f433468f6634)
+
+![Screenshot from 2025-03-20 21-48-51](https://github.com/user-attachments/assets/f61156c3-2460-40af-a63d-3c28b727f8ca)
+
+![Screenshot from 2025-03-20 21-50-00](https://github.com/user-attachments/assets/23d37a8e-2558-4b41-8e22-b2b0c71d9cd9)
+
+![Screenshot from 2025-03-20 21-50-32](https://github.com/user-attachments/assets/eb0c61b4-c2cd-4692-88dc-7f2fbcfcca0e)
+
+![Screenshot from 2025-03-20 21-51-06](https://github.com/user-attachments/assets/4a47c552-ab71-4256-9896-ef3b3b8c84f5)
+
+
+
+
+
