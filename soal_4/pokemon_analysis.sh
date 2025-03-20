@@ -67,7 +67,9 @@ fi
 
 if [ "$perintah" == "--grep" ]; then
     if [ -z "$3" ]; then
-        echo "Error: tidak ada argumen untuk grep"
+        echo "Error: tidak ada argumen untuk grep
+        gunakan -h atau --help untuk bantuan"
+        
         exit 1
     fi
 
@@ -86,7 +88,8 @@ fi
 
 if [ "$perintah" == "--filter" ]; then
     if [ -z "$3" ]; then
-        echo "Error: Tidak ada tipe Pokémon yang dimasukkan untuk filter!"
+        echo "Error: Tidak ada tipe Pokémon yang dimasukkan untuk filter!
+        gunakan -h atau --help untuk bantuan""
         exit 1
     fi
 
