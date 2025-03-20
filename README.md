@@ -197,4 +197,9 @@ echo -e "\e[1;34mSᑭᕮᗩK TO ᗰᕮ - ᗯOᖇᗪS Oᖴ ᗩᖴᖖᗩTIOᑎ\e[0
 ```
 - Perubahan huruf "R" menjadi "Q" pada kata "AFFIRMATION", kemungkinan untuk gaya teks dekoratif.
 
+### Output
+
+![Screenshot from 2025-03-20 21-13-15](https://github.com/user-attachments/assets/ef118ee0-ef52-4372-9d21-5833444057e2)
+
+
 ## Soal No 4
