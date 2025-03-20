@@ -12,7 +12,351 @@
 soon
 
 ## Soal No 2
-soon
+
+### 1. register.sh
+### Fungsi:
+Mendaftarkan pengguna baru dengan validasi email dan password, lalu menyimpannya dalam file CSV.
+
+### Penjelasan Kode:
+#### 1. **Memvalidasi Format Email:**  
+   ```bash
+   echo "$Email" | awk '
+   BEGIN {
+       janjiw = 1;
+       merah = "\033[31m";
+       reset = "\033[0m";
+   }
+   {
+       if (!($0 ~ /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+           print merah "emailnya tolong diperhatikan yah" reset;
+           janjiw = 0;
+       }
+   }
+   END {
+       if (janjiw == 0)
+           exit 1;
+   }' || { exit 1; }
+   ```
+   - `awk` → Mengecek format email sesuai pola regex standar.  
+   - `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$` → Pola regex untuk format email   
+     - `[a-zA-Z0-9._%+-]+` → Karakter yang diizinkan sebelum `@`.  
+     - `@` → Karakter pemisah email.  
+     - `[a-zA-Z0-9.-]+` → Karakter yang diizinkan setelah `@`.  
+     - `\.` → Titik setelah domain.  
+     - `[a-zA-Z]{2,}$` → Minimal dua huruf untuk TLD.  
+   - Jika format tidak sesuai, mencetak pesan error dan keluar dari skrip.  
+
+#### 2. **Memeriksa Apakah Email Sudah Terdaftar:**  
+   ```bash
+   if grep -q "^$Email," data/player.csv; then
+     echo -e "\033[31mCoba ganti email bang, yang ini udah ada.\033[0m"
+     exit 1
+   fi
+   ```
+   - `grep -q` → Mengecek apakah email sudah ada di file `data/player.csv` tanpa mencetak output.  
+   - Jika email ditemukan, program akan mencetak pesan error dan keluar.  
+
+#### 3. **Memvalidasi Format Password:**  
+   ```bash
+   echo "$Pword" | awk '
+   BEGIN {
+       Menyala = "\033[31m"
+       Membenar = "\033[32m"
+       reset = "\033[0m"
+   }
+   {
+       rucak = ""
+       if (length($0) < 8)
+           rucak = rucak "Singkat,padat,kurang (min. 8 char). "
+       if (!($0 ~ /[A-Z]/))
+           rucak = rucak "Sedikitnya 1 huruf major. "
+       if (!($0 ~ /[a-z]/))
+           rucak = rucak "Sedikitnya 1 huruf minor. "
+       if (!($0 ~ /[0-9]/))
+           rucak = rucak "Sedikitnya 1 angka. "
+
+       if (length(rucak) > 0) {
+           print Menyala rucak reset
+           exit 1
+       } else {
+           print Membenar "Oke, Passwordnya udah manjiww!" reset
+       }
+   }' || exit 1
+   ```
+   - `length($0) < 8` → Minimal panjang password adalah 8 karakter.  
+   - `/[A-Z]/` → Harus memiliki minimal satu huruf kapital.  
+   - `/[a-z]/` → Harus memiliki minimal satu huruf kecil.  
+   - `/[0-9]/` → Harus memiliki minimal satu angka.  
+   - Jika tidak memenuhi syarat, akan mencetak pesan error dan keluar.  
+
+#### 4. **Mengenkripsi Password dan Menyimpan Data:**  
+   ```bash
+   sSalt="V3st1@Zet4"
+   HPword=$(echo -n "$Pword$sSalt" | sha256sum | awk '{print $1}')
+
+   record="$Email,$username,$HPword"
+   echo "$record" >> data/player.csv
+   ```
+   - `sSalt="V3st1@Zet4"` → Menambahkan salt untuk memperkuat keamanan password.  
+   - `echo -n "$Pword$sSalt" | sha256sum` → Menghasilkan hash SHA-256 dari password + salt.  
+   - `awk '{print $1}'` → Mengambil hasil hash (tanpa tanda `-`).  
+   - `>> data/player.csv` → Menambahkan data ke akhir file tanpa menimpa data sebelumnya.
+
+### 2. login.sh
+### Fungsi:
+Melakukan proses login dengan memvalidasi email dan password yang sudah terdaftar di file CSV.
+
+### Penjelasan Kode:
+#### 1. **Memvalidasi Format Email**
+Proses validasi format email ini kurang lebih sama kayak yang ada di `register.sh`. Jika format email tidak sesuai, program akan mencetak pesan error dan keluar.
+
+#### 2. **Memeriksa Apakah Email Terdaftar**
+```bash
+if ! grep -q "^$Email," data/player.csv; then
+    echo -e "\033[31mEmail tidak ditemukan, kamu bohong, register dulu.\033[0m"
+    exit 1
+fi
+```
+- `grep -q` → Mencari email pada file `data/player.csv` tanpa mencetak output ke terminal.
+- `^$Email,` → Pola regex untuk mencocokkan email di awal baris.
+- Jika email tidak ditemukan, program akan mencetak pesan error dan keluar.
+
+
+#### 3. **Membandingkan Password**
+```bash
+sSalt="V3st1@Zet4"
+HPword=$(echo -n "$Pword$sSalt" | sha256sum | awk '{print $1}')
+
+storedHPword=$(grep "^$Email," data/player.csv | head -n 1 | awk -F',' '{print $3}')
+
+if [ "$HPword" = "$storedHPword" ]; then
+    echo -e "\033[32mLogin berhasil!\033[0m"
+else
+    echo -e "\033[31mTolong diperhatikan lagi passwordnya\033[0m"
+    exit 1
+fi
+```
+- `sSalt="V3st1@Zet4"` → Salt yang sama persis kayak di register.sh digunakan untuk memastikan hashing konsisten.
+- `echo -n "$Pword$sSalt" | sha256sum | awk '{print $1}'` → Mengenkripsi password dengan algoritma SHA-256.
+- `storedHPword=$(grep "^$Email," data/player.csv | head -n 1 | awk -F',' '{print $3}')` → Mencari hash password yang tersimpan di file.
+    - `grep "^$Email," data/player.csv` → Mencari baris dengan email yang sesuai.
+    - `head -n 1` → Mengambil baris pertama yang cocok.
+    - `awk -F',' '{print $3}'` → Mengambil kolom ketiga (hash password).
+- `if [ "$HPword" = "$storedHPword" ]; then` → Membandingkan hasil hash password yang diinput dengan yang tersimpan di file.
+    - Jika cocok, mencetak pesan sukses.
+    - Jika tidak cocok, mencetak pesan error dan keluar.
+
+### 3. core_monitor.sh
+### Fungsi:
+Memonitor penggunaan CPU dan menampilkan informasi tentang model CPU serta persentase penggunaan CPU saat ini.
+
+### Penjelasan Kode:
+#### 1. **Mendapatkan Model CPU**
+```bash
+cpu_model=$(grep "model name" /proc/cpuinfo | head -n 1 | cut -d ':' -f2- | sed 's/^[ \t]*//')
+```
+- `grep "model name" /proc/cpuinfo` → Mencari baris yang berisi informasi model CPU dari file `/proc/cpuinfo`.
+- `head -n 1` → Mengambil hanya baris pertama (kalo ada lebih dari satu prosesor).
+- `cut -d ':' -f2-` → Memotong teks setelah tanda `:` untuk mendapatkan nama model CPU.
+- `sed 's/^[ \t]*//'` → Menghapus spasi atau tab yang ada di awal string.
+
+#### 2. **Mendapatkan Waktu Sekarang**
+```bash
+timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+```
+- `date '+%Y-%m-%d %H:%M:%S'` → Mengambil waktu sistem dalam format `YYYY-MM-DD HH:MM:SS`.
+
+#### 3. **Menghitung Penggunaan CPU**
+```bash
+cpu_idle=$(top -bn1 | grep "Cpu(s)" | sed "s/.*, *\([0-9.]*\)%* id.*/\1/")
+cpu_usage=$(awk -v idle="$cpu_idle" 'BEGIN { usage=100 - idle; printf "%.0f", usage }')
+```
+- `top -bn1` → Menjalankan perintah `top` dalam mode batch dan hanya memperbarui satu kali.
+- `grep "Cpu(s)"` → Mencari baris yang berisi informasi tentang CPU.
+- `sed "s/.*, *\([0-9.]*\)%* id.*/\1/"` → Mengambil nilai `idle` dari hasil `top`.
+- `awk -v idle="$cpu_idle" 'BEGIN { usage=100 - idle; printf "%.0f", usage }'` → Menghitung penggunaan CPU (100% - idle) dan menampilkan dalam format bulat.
+
+#### 4. **Menampilkan Informasi**
+```bash
+echo "[$timestamp] - Core Usage [${cpu_usage}%] - Terminal Model [${cpu_model}]"
+```
+- `echo` → Mencetak informasi ke terminal dengan format:
+    - `[timestamp]` → Waktu saat ini.
+    - `Core Usage [${cpu_usage}%]` → Persentase penggunaan CPU.
+    - `Terminal Model [${cpu_model}]` → Nama model CPU.
+
+### 4. frag_monitor.sh
+### Fungsi:
+Memantau penggunaan memori (RAM) dalam sistem dan mencetak informasi jumlah memori yang digunakan, total memori, dan persentase penggunaan memori saat ini.
+
+### Penjelasan Kode:
+#### 1. **Membaca Data Penggunaan Memori**
+```bash
+read total used free shared buff_cache available < <(free -m | awk 'NR==2 {print $2, $3, $4, $5, $6, $7}')
+```
+- `free -m` → Menampilkan informasi penggunaan memori dalam satuan MB (megabyte).
+- `awk 'NR==2 {print $2, $3, $4, $5, $6, $7}'` → Mengambil baris kedua (yang menunjukkan data memori fisik) dan mencetak kolom-kolom berikut:
+    - `$2` → **total** → Total memori fisik yang tersedia di sistem.
+    - `$3` → **used** → Jumlah memori yang sedang digunakan.
+    - `$4` → **free** → Jumlah memori yang tidak digunakan.
+    - `$5` → **shared** → Jumlah memori yang digunakan bersama antar proses.
+    - `$6` → **buff/cache** → Jumlah memori yang digunakan sebagai buffer atau cache.
+    - `$7` → **available** → Perkiraan memori yang masih bisa dialokasikan ke proses baru.
+
+- `read total used free shared buff_cache available` → Menyimpan nilai yang diambil dari perintah `awk` ke dalam variabel yang bersangkutan.
+
+#### 2. **Menghitung Penggunaan Memori (Fragment Usage)**
+```bash
+used_mem=$(echo "$total - $available" | bc)
+usage=$(echo "scale=1; ($used_mem*100)/$total" | bc)
+```
+- `echo "$total - $available" | bc` → Menghitung jumlah memori yang sedang digunakan (dengan mengurangkan total memori dan memori yang tersedia).
+- `bc` → **Basic Calculator**, digunakan untuk melakukan operasi matematika di bash.
+- `scale=1` → Menentukan presisi hasil perhitungan hingga 1 angka desimal.
+- `($used_mem*100)/$total` → Menghitung persentase memori yang digunakan.
+
+#### 3. **Mengambil Timestamp Saat Ini**
+```bash
+timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+```
+- `date '+%Y-%m-%d %H:%M:%S'` → Mengambil waktu saat ini dalam format `YYYY-MM-DD HH:MM:SS`.
+
+#### 4. **Menampilkan Hasil ke Terminal**
+```bash
+echo "[$timestamp] - Fragment Usage [${usage}%] - Fragment Count [${used_mem} MB] - Details [Total: ${total} MB, Available: ${available} MB]"
+```
+- Mencetak informasi berikut ke terminal:
+    - `[$timestamp]` → Waktu saat ini.
+    - `Fragment Usage` → Persentase memori yang digunakan.
+    - `Fragment Count` → Jumlah memori yang digunakan dalam satuan MB.
+    - `Details` → Rincian total memori dan memori yang tersedia dalam MB.
+
+### 5. manager.sh
+### Fungsi:
+Mengelola proses monitoring CPU dan RAM menggunakan `cron job`, serta menyediakan antarmuka untuk mengaktifkan, menonaktifkan, dan menampilkan status monitoring.
+
+### Penjelasan Kode:
+#### 1. **Deklarasi Warna, Direktori, dan Fungsi Menu**
+- Kode di awal berfungsi untuk:
+  - Deklarasi warna.
+  - Fungsi `A_nexus()` menampilkan menu.
+
+#### 2. **Inisialisasi Path Direktori**
+- `project_dir="$(dirname "$(dirname "$(realpath "$0")")")"` → Mengatur path direktori utama dari lokasi `manager.sh` berada.
+- `logs_dir="$project_dir/logs"` → Menentukan direktori untuk menyimpan file log.
+
+#### 3. **Mengaktifkan atau Menonaktifkan Core Monitor dan Fragment Monitor**
+```bash
+if ! crontab -l | grep -q "core_monitor.sh"; then
+   (crontab -l; echo "*/5 * * * * /bin/bash $project_dir/scripts/core_monitor.sh >> $logs_dir/core.log 2>&1") | crontab -
+   echo -e "${GREEN}CPU [Core] Monitor meownyala!${NC}"
+else
+   crontab -l | grep -v "core_monitor.sh" | crontab -
+   echo -e "${RED}CPU [Core] Monitor turu${NC}"
+fi
+
+if ! crontab -l | grep -q "frag_monitor.sh"; then
+   (crontab -l; echo "*/10 * * * * /bin/bash $project_dir/scripts/frag_monitor.sh >> $logs_dir/fragment.log 2>&1") | crontab -
+   echo -e "${GREEN}RAM [Fragment] Monitor meownyala!${NC}"
+else
+   crontab -l | grep -v "frag_monitor.sh" | crontab -
+   echo -e "${RED}RAM [Fragment] Monitor turu${NC}"
+fi
+```
+- `crontab -l` → Menampilkan daftar cron job aktif.
+- `grep -q` → Mengecek apakah cron job untuk `core_monitor.sh` atau `frag_monitor.sh` sudah terdaftar.
+- Jika belum terdaftar, cron job baru ditambahkan:
+    - `*/5 * * * *` → Menjalankan `core_monitor.sh` setiap 5 menit.
+    - `*/10 * * * *` → Menjalankan `frag_monitor.sh` setiap 10 menit.
+    - `>> $logs_dir/core.log 2>&1` → Menyimpan output ke file log dan mencatat error jika ada.
+- Jika sudah terdaftar, cron job akan dihapus menggunakan `grep -v`.
+
+#### 4. **Menampilkan Cron Job yang Aktif dan Menangani Input Tidak Valid**
+```bash
+echo -e "${CYAN}Active Cron Jobs:${NC}"
+crontab -l
+read -r
+```
+- `crontab -l` → Menampilkan semua cron job yang sedang aktif.
+- `read -r` → Menunggu input untuk kembali ke menu.
+
+```bash
+6)
+    echo -e "${GREEN}Exiting ARCAEA MONITOR... じゃあね!${NC}"
+    exit 0
+    ;;
+*)
+    echo -e "${RED}Invalid option! Please try again.${NC}"
+    sleep 1
+    ;;
+```
+- `exit 0` → Menghentikan program dengan status sukses.
+- Jika input tidak valid, program akan mencetak pesan kesalahan dan kembali ke menu.
+
+### 6. terminal.sh
+### Fungsi:
+Mengelola proses utama aplikasi dengan menampilkan menu untuk melakukan registrasi, login, dan keluar dari program.
+
+### Penjelasan Kode:
+#### 1. **Deklarasi Warna dan Fungsi Menu**
+- **Kode di awal berfungsi untuk:**
+  - deklarasi warna.
+  - `dirname "$0"` → Mengambil direktori tempat file `terminal.sh` berada.
+  - Fungsi `show_menu()` nampilin menu .
+
+#### 2. **Menangani Pilihan Menu**
+```bash
+read -p "$(echo -e ${ORANGE}Select an option [1-3]: ${NC})" choice
+case $choice in
+```
+- `read -p` → Membaca input player.
+- `case $choice in` → Menangani input berdasarkan pilihan pengguna.
+
+#### 3. **Registrasi Pengguna**
+```bash
+1)
+    "$script_dir/register.sh"
+```
+- `$script_dir/register.sh` → Menjalankan skrip `register.sh` untuk proses registrasi.
+
+#### 4. **Login Pengguna dan Menjalankan Manager**
+```bash
+2)
+    "$script_dir/login.sh"
+    if [ $? -eq 0 ]; then
+        bash "$script_dir/scripts/manager.sh"
+    fi
+```
+- `$script_dir/login.sh` → Menjalankan skrip `login.sh` untuk proses login.
+- `if [ $? -eq 0 ]; then` → Mengecek apakah `login.sh` dieksekusi dengan status sukses (kode 0).
+    - Jika berhasil, maka akan menjalankan `manager.sh` untuk mengatur proses monitoring.
+
+#### 5. **Keluar dari Program atau Menangani Input Tidak Valid**
+```bash
+3)
+    echo -e "${RED}Exiting ARCAEA NEXUS... またね!!${NC}"
+    exit 0
+    ;;
+*)
+    echo -e "${RED}Invalid option! Please try again.${NC}"
+    ;;
+```
+- `exit 0` → Menghentikan program dengan status sukses.
+- Jika input tidak valid, program akan mencetak pesan kesalahan dan kembali ke menu.
+
+### Error soal ini
+#### 1.
+![image](https://github.com/user-attachments/assets/bf719c4b-f6a7-40ae-8943-186288394b92)
+bisa spam cron tab, jadi double.
+![image](https://github.com/user-attachments/assets/69533a89-f1d5-4c4f-bd46-bf22b295264c)
+Nambahin if, biar gak rusak/double lagi
+
+#### 2.
+![image](https://github.com/user-attachments/assets/1617a280-891b-430d-8f92-5c94c2a8b7cd)
+error
+![image](https://github.com/user-attachments/assets/1f2a4dc3-cf59-4ec1-988b-cda3f864ef3a)
+Hapus while yang ada di a_nexus, biar ga error lagi.
+
 
 ## Soal No 3
 
